@@ -19,12 +19,4 @@ class CarbonDate extends SingleAttributeCaster implements Castable
             $value['timezone']
         );
     }
-
-    /**
-     * @return mixed
-     */
-    public function uncast($value)
-    {
-        // TODO: Implement uncast() method.
-    }
 }

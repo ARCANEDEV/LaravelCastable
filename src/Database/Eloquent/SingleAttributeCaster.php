@@ -25,7 +25,7 @@ abstract class SingleAttributeCaster implements Castable
     }
 
     /* -----------------------------------------------------------------
-     |  Main Methods
+     |  Getters & Setters
      | -----------------------------------------------------------------
      */
 
@@ -49,6 +49,14 @@ abstract class SingleAttributeCaster implements Castable
         return $this->casted;
     }
 
+    /* -----------------------------------------------------------------
+     |  Main Methods
+     | -----------------------------------------------------------------
+     */
+
+    /**
+     * @return mixed
+     */
     public function uncast($value)
     {
         return $this->getOriginal();
