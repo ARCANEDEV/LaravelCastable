@@ -1,4 +1,4 @@
-<?php namespace Arcanedev\LaravelCastableModels\Casts;
+<?php namespace Arcanedev\LaravelCastable\Casts;
 
 use Arcanedev\LaravelCastable\Contracts\Caster;
 

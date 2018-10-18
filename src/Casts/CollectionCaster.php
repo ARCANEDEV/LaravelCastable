@@ -1,6 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastableModels\Contracts\Caster;
+use Arcanedev\LaravelCastable\Contracts\Caster;
 use Illuminate\Support\Collection;
 
 class CollectionCaster implements Caster
