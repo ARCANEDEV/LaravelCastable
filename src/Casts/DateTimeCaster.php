@@ -1,12 +1,13 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
 
-class DateTimeCaster implements Caster
+class DateTimeCaster extends AbstractCaster
 {
     /**
+     * @param  mixed  $value
+     *
      * @return \Illuminate\Support\Carbon
      */
     public static function cast($value)
@@ -15,11 +16,13 @@ class DateTimeCaster implements Caster
     }
 
     /**
-     * @return mixed
+     * @param  \Illuminate\Support\Carbon  $value
+     *
+     * @return string
      */
     public static function uncast($value)
     {
-        // TODO: Implement uncast() method.
+        return $value->format(static::dateFormat());
     }
 
     /* -----------------------------------------------------------------

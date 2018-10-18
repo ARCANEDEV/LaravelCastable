@@ -1,9 +1,8 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
 use Illuminate\Support\Collection;
 
-class CollectionCaster implements Caster
+class CollectionCaster extends AbstractCaster
 {
     /* -----------------------------------------------------------------
      |  Main Methods

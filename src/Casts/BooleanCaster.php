@@ -1,8 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-class BooleanCaster implements Caster
+class BooleanCaster extends AbstractCaster
 {
     /* -----------------------------------------------------------------
      |  Main Methods
@@ -23,6 +21,6 @@ class BooleanCaster implements Caster
      */
     public static function uncast($value)
     {
-        return (int) $value;
+        return intval($value);
     }
 }

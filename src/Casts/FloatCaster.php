@@ -1,8 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-class FloatCaster implements Caster
+class FloatCaster extends AbstractCaster
 {
     /* -----------------------------------------------------------------
      |  Main Methods
@@ -10,6 +8,8 @@ class FloatCaster implements Caster
      */
 
     /**
+     * @param  mixed  $value
+     *
      * @return mixed
      */
     public static function cast($value)
@@ -18,6 +18,8 @@ class FloatCaster implements Caster
     }
 
     /**
+     * @param  mixed  $value
+     *
      * @return mixed
      */
     public static function uncast($value)

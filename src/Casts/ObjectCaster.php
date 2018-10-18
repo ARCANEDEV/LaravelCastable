@@ -1,15 +1,13 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-class ObjectCaster implements Caster
+class ObjectCaster extends AbstractCaster
 {
     /**
      * @return mixed
      */
     public static function cast($value)
     {
-        return json_decode($value, false);
+        return json_decode($value);
     }
 
     /**

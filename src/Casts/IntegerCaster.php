@@ -1,8 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-class IntegerCaster implements Caster
+class IntegerCaster extends AbstractCaster
 {
     /**
      * @return mixed
@@ -10,13 +8,5 @@ class IntegerCaster implements Caster
     public static function cast($value)
     {
         return intval($value);
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function uncast($value)
-    {
-        return static::cast($value);
     }
 }

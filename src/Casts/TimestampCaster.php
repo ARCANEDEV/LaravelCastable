@@ -19,6 +19,6 @@ class TimestampCaster extends DateTimeCaster
      */
     public static function uncast($value)
     {
-        return static::asDateTime($value)->toDateTimeString();
+        return static::asDateTime($value)->format(static::dateFormat());
     }
 }

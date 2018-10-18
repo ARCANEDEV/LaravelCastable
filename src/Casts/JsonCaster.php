@@ -1,8 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-class JsonCaster implements Caster
+class JsonCaster extends AbstractCaster
 {
     /* -----------------------------------------------------------------
      |  Main Methods
