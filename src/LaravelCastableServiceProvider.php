@@ -29,6 +29,8 @@ class LaravelCastableServiceProvider extends PackageServiceProvider
         parent::register();
 
         $this->registerConfig();
+
+        $this->singleton(Contracts\CasterManager::class, Caster::class);
     }
 
     /**
@@ -49,7 +51,7 @@ class LaravelCastableServiceProvider extends PackageServiceProvider
     public function provides()
     {
         return [
-            //
+            Contracts\CasterManager::class,
         ];
     }
 }

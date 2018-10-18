@@ -1,7 +1,28 @@
 <?php namespace Arcanedev\LaravelCastable;
 
-class Caster
+use Arcanedev\LaravelCastable\Contracts\CasterManager;
+use Illuminate\Config\Repository;
+
+class Caster implements CasterManager
 {
+    /* -----------------------------------------------------------------
+     |  Properties
+     | -----------------------------------------------------------------
+     */
+
+    /** @var \Illuminate\Contracts\Config\Repository  */
+    private $config;
+
+    /* -----------------------------------------------------------------
+     |  Constructor
+     | -----------------------------------------------------------------
+     */
+
+    public function __construct(Repository $config)
+    {
+        $this->config = $config;
+    }
+
     /* -----------------------------------------------------------------
      |  Main Methods
      | -----------------------------------------------------------------
@@ -13,10 +34,10 @@ class Caster
      *
      * @return mixed
      */
-    public static function cast($type, $value)
+    public function cast($type, $value)
     {
-        return static::hasCaster($type)
-            ? (static::getCaster($type))::cast($value)
+        return $this->hasCaster($type)
+            ? ($this->getCaster($type))::cast($value)
             : $value;
     }
 
@@ -26,10 +47,10 @@ class Caster
      *
      * @return mixed
      */
-    public static function uncast($type, $value)
+    public function uncast($type, $value)
     {
-        return static::hasCaster($type)
-            ? (static::getCaster($type))::uncast($value)
+        return $this->hasCaster($type)
+            ? ($this->getCaster($type))::uncast($value)
             : $value;
     }
 
@@ -40,9 +61,9 @@ class Caster
      *
      * @return bool
      */
-    public static function hasCaster($type)
+    public function hasCaster($type)
     {
-        return config()->has("laravel-castable.casters.$type");
+        return $this->config->has("laravel-castable.casters.$type");
     }
 
     /**
@@ -52,8 +73,8 @@ class Caster
      *
      * @return string
      */
-    public static function getCaster($type)
+    public function getCaster($type)
     {
-        return config()->get("laravel-castable.casters.$type");
+        return $this->config->get("laravel-castable.casters.$type");
     }
 }

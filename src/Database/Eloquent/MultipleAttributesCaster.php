@@ -1,11 +1,12 @@
 <?php namespace Arcanedev\LaravelCastable\Database\Eloquent;
 
 use Arcanedev\LaravelCastable\{
-    Caster, Contracts\Castable, Database\Eloquent\Concerns\WithCastableAttributes
+    Contracts\Castable, Contracts\CasterManager, Database\Eloquent\Concerns\WithCastableAttributes
 };
 use ArrayAccess;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\{
+    Arrayable, Jsonable
+};
 use JsonSerializable;
 
 abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAccess, Jsonable, JsonSerializable
@@ -233,19 +234,19 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         if ($this->isCustomObjectCastable($key))
             return $this->castCustomAttribute($key, $value);
 
-        return Caster::cast($this->casts[$key] ?? 'null', $value);
+        return $this->getCasterManager()->cast($this->casts[$key] ?? 'null', $value);
     }
 
     protected function uncastAttribute($key, $value)
     {
         if ($this->isCustomObjectCastable($key)) {
-            /** @var  \Arcanedev\LaravelCastableModels\Contracts\Castable  $type */
+            /** @var  \Arcanedev\LaravelCastable\Contracts\Castable  $type */
             $type = $this->getCasted()[$key];
 
             return $type->uncast($type->getCasted());
         }
 
-        return Caster::uncast($this->casts[$key] ?? 'null', $value);
+        return $this->getCasterManager()->uncast($this->casts[$key] ?? 'null', $value);
     }
 
     protected function hasCastAttribute($key)
@@ -262,5 +263,15 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         }
 
         return $results;
+    }
+
+    /**
+     * Get the caster manager.
+     *
+     * @return \Arcanedev\LaravelCastable\Contracts\CasterManager
+     */
+    protected function getCasterManager()
+    {
+        return app(CasterManager::class);
     }
 }
