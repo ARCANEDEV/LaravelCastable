@@ -7,7 +7,7 @@ class DateCaster extends DateTimeCaster
      *
      * @return \Illuminate\Support\Carbon
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return parent::cast($value)->startOfDay();
     }
@@ -17,8 +17,8 @@ class DateCaster extends DateTimeCaster
      *
      * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
-        return static::cast($value)->format(static::dateFormat());
+        return $this->cast($value)->format(static::dateFormat());
     }
 }

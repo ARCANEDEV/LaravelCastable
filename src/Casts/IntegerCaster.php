@@ -3,9 +3,11 @@
 class IntegerCaster extends AbstractCaster
 {
     /**
-     * @return mixed
+     * @param  mixed  $value
+     *
+     * @return int
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return intval($value);
     }

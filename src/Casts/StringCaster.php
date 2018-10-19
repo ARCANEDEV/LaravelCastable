@@ -5,9 +5,9 @@ class StringCaster extends AbstractCaster
     /**
      * @param  mixed  $value
      *
-     * @return mixed
+     * @return string
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return (string) $value;
     }

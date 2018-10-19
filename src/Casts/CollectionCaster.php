@@ -14,7 +14,7 @@ class CollectionCaster extends AbstractCaster
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return new Collection(
             json_decode($value, true)
@@ -26,7 +26,7 @@ class CollectionCaster extends AbstractCaster
      *
      * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return $value->toJson();
     }

@@ -1,7 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Tests\Casts;
 
 use Arcanedev\LaravelCastable\Casts\JsonCaster;
-use Arcanedev\LaravelCastable\Tests\TestCase;
 
 class JsonCasterTest extends TestCase
 {
@@ -11,11 +10,24 @@ class JsonCasterTest extends TestCase
      */
 
     /** @test */
+    public function it_can_be_instantiated()
+    {
+        $expectations = [
+            \Arcanedev\LaravelCastable\Contracts\Caster::class,
+            \Arcanedev\LaravelCastable\Casts\JsonCaster::class,
+        ];
+
+        foreach ($expectations as $expected) {
+            static::assertInstanceOf($expected, $this->caster);
+        }
+    }
+
+    /** @test */
     public function it_can_cast()
     {
         static::assertEquals(
             ['foo' => 'bar'],
-            JsonCaster::cast('{"foo":"bar"}')
+            $this->caster->cast('{"foo":"bar"}')
         );
     }
 
@@ -24,7 +36,17 @@ class JsonCasterTest extends TestCase
     {
         static::assertEquals(
             '{"foo":"bar"}',
-            JsonCaster::uncast(['foo' => 'bar'])
+            $this->caster->uncast(['foo' => 'bar'])
         );
+    }
+
+    /**
+     * Get the caster.
+     *
+     * @return \Arcanedev\LaravelCastable\Contracts\Caster
+     */
+    protected function caster()
+    {
+        return new JsonCaster;
     }
 }

@@ -1,7 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Tests\Casts;
 
 use Arcanedev\LaravelCastable\Casts\ArrayCaster;
-use Arcanedev\LaravelCastable\Tests\TestCase;
 
 class ArrayCasterTest extends TestCase
 {
@@ -11,11 +10,24 @@ class ArrayCasterTest extends TestCase
      */
 
     /** @test */
+    public function it_can_be_instantiated()
+    {
+        $expectations = [
+            \Arcanedev\LaravelCastable\Contracts\Caster::class,
+            \Arcanedev\LaravelCastable\Casts\ArrayCaster::class,
+        ];
+
+        foreach ($expectations as $expected) {
+            static::assertInstanceOf($expected, $this->caster);
+        }
+    }
+
+    /** @test */
     public function it_can_cast()
     {
         static::assertEquals(
             ['foo' => 'bar'],
-            ArrayCaster::cast('{"foo":"bar"}')
+            $this->caster->cast('{"foo":"bar"}')
         );
     }
 
@@ -24,7 +36,20 @@ class ArrayCasterTest extends TestCase
     {
         static::assertEquals(
             '{"foo":"bar"}',
-            ArrayCaster::uncast(['foo' => 'bar'])
+            $this->caster->uncast(['foo' => 'bar'])
         );
+    }
+
+    /* -----------------------------------------------------------------
+     |  Other Methods
+     | -----------------------------------------------------------------
+     */
+
+    /**
+     * @return \Arcanedev\LaravelCastable\Contracts\Caster
+     */
+    protected function caster()
+    {
+        return new ArrayCaster;
     }
 }

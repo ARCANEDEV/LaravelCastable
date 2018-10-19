@@ -12,7 +12,7 @@ class JsonCaster extends AbstractCaster
      *
      * @return array
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return json_decode($value, true);
     }
@@ -22,7 +22,7 @@ class JsonCaster extends AbstractCaster
      *
      * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return json_encode($value);
     }

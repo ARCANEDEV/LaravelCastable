@@ -5,10 +5,12 @@ use Arcanedev\LaravelCastable\Contracts\Caster;
 abstract class AbstractCaster implements Caster
 {
     /**
+     * @param  mixed  $value
+     *
      * @return mixed
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
-        return static::cast($value);
+        return $this->cast($value);
     }
 }

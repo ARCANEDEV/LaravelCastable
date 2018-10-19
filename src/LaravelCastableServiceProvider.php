@@ -30,7 +30,7 @@ class LaravelCastableServiceProvider extends PackageServiceProvider
 
         $this->registerConfig();
 
-        $this->singleton(Contracts\CasterManager::class, Caster::class);
+        $this->singleton(Contracts\CasterManager::class, CasterManager::class);
     }
 
     /**

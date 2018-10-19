@@ -7,7 +7,7 @@ class TimestampCaster extends DateTimeCaster
      *
      * @return int
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return static::asDateTime($value)->getTimestamp();
     }
@@ -17,7 +17,7 @@ class TimestampCaster extends DateTimeCaster
      *
      * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return static::asDateTime($value)->format(static::dateFormat());
     }

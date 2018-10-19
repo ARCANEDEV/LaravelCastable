@@ -8,18 +8,22 @@ class BooleanCaster extends AbstractCaster
      */
 
     /**
-     * @return BooleanCaster
+     * @param  mixed  $value
+     *
+     * @return bool
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return boolval($value);
     }
 
     /**
      *
-     * @return string
+     * @param  bool  $value
+     *
+     * @return int
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return intval($value);
     }

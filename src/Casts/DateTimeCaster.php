@@ -5,12 +5,17 @@ use Illuminate\Support\Carbon;
 
 class DateTimeCaster extends AbstractCaster
 {
+    /* -----------------------------------------------------------------
+     |  Main Methods
+     | -----------------------------------------------------------------
+     */
+
     /**
      * @param  mixed  $value
      *
      * @return \Illuminate\Support\Carbon
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return static::asDateTime($value);
     }
@@ -20,7 +25,7 @@ class DateTimeCaster extends AbstractCaster
      *
      * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return $value->format(static::dateFormat());
     }

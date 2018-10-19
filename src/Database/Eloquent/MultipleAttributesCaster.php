@@ -234,7 +234,7 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         if ($this->isCustomObjectCastable($key))
             return $this->castCustomAttribute($key, $value);
 
-        return $this->getCasterManager()->cast($this->casts[$key] ?? 'null', $value);
+        return cast($this->casts[$key] ?? 'null', $value);
     }
 
     protected function uncastAttribute($key, $value)
@@ -246,7 +246,7 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
             return $type->uncast($type->getCasted());
         }
 
-        return $this->getCasterManager()->uncast($this->casts[$key] ?? 'null', $value);
+        return uncast($this->casts[$key] ?? 'null', $value);
     }
 
     protected function hasCastAttribute($key)
@@ -263,15 +263,5 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         }
 
         return $results;
-    }
-
-    /**
-     * Get the caster manager.
-     *
-     * @return \Arcanedev\LaravelCastable\Contracts\CasterManager
-     */
-    protected function getCasterManager()
-    {
-        return app(CasterManager::class);
     }
 }

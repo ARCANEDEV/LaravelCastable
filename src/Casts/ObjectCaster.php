@@ -3,17 +3,21 @@
 class ObjectCaster extends AbstractCaster
 {
     /**
-     * @return mixed
+     * @param  string  $value
+     *
+     * @return object
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return json_decode($value);
     }
 
     /**
-     * @return mixed
+     * @param  object $value
+     *
+     * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return json_encode($value);
     }

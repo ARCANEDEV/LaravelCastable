@@ -3,12 +3,16 @@
 interface Caster
 {
     /**
+     * @param  mixed  $value
+     *
      * @return mixed
      */
-    public static function cast($value);
+    public function cast($value);
 
     /**
+     * @param  mixed  $value
+     *
      * @return mixed
      */
-    public static function uncast($value);
+    public function uncast($value);
 }

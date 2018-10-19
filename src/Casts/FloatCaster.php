@@ -10,19 +10,19 @@ class FloatCaster extends AbstractCaster
     /**
      * @param  mixed  $value
      *
-     * @return mixed
+     * @return float
      */
-    public static function cast($value)
+    public function cast($value)
     {
         return floatval($value);
     }
 
     /**
-     * @param  mixed  $value
+     * @param  float  $value
      *
-     * @return mixed
+     * @return string
      */
-    public static function uncast($value)
+    public function uncast($value)
     {
         return (string) $value;
     }
