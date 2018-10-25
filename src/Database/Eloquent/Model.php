@@ -31,9 +31,10 @@ abstract class Model extends IlluminateModel
         if (is_null($value))
             return $value;
 
-        return $this->isCustomObjectCastable($key)
-            ? $this->getAttributeFromArray($key)
-            : parent::castAttribute($key, $value);
+        if ($this->isCustomObjectCastable($key))
+            return $this->getAttributeFromArray($key);
+
+        return cast($this->getCastType($key), $value);
     }
 
     /**
