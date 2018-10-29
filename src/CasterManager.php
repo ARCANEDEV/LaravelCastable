@@ -39,8 +39,11 @@ class CasterManager implements CasterManagerContract
      */
     public function cast($type, $value)
     {
+        if (str_contains($type, ':'))
+            list($type, $format) = explode(':', $type, 2);
+
         return $this->hasCaster($type)
-            ? $this->getCaster($type)->cast($value)
+            ? $this->getCaster($type)->setFormat($format ?? null)->cast($value)
             : $value;
     }
 
@@ -52,8 +55,11 @@ class CasterManager implements CasterManagerContract
      */
     public function uncast($type, $value)
     {
+        if (str_contains($type, ':'))
+            list($type, $format) = explode(':', $type, 2);
+
         return $this->hasCaster($type)
-            ? $this->getCaster($type)->uncast($value)
+            ? $this->getCaster($type)->setFormat($format ?? null)->uncast($value)
             : $value;
     }
 

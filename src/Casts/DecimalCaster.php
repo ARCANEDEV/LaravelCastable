@@ -1,18 +1,15 @@
 <?php namespace Arcanedev\LaravelCastable\Casts;
 
-use Arcanedev\LaravelCastable\Contracts\Caster;
-
-abstract class AbstractCaster implements Caster
+class DecimalCaster extends AbstractCaster
 {
     /* -----------------------------------------------------------------
      |  Properties
      | -----------------------------------------------------------------
      */
 
-    /**
-     * @var string|null
-     */
-    protected $format;
+    protected $decimalSeparator   = '.';
+
+    protected $thousandsSeparator = '';
 
     /* -----------------------------------------------------------------
      |  Main Methods
@@ -20,19 +17,22 @@ abstract class AbstractCaster implements Caster
      */
 
     /**
-     * @param  mixed  $value
+     * @param  mixed $value
      *
      * @return mixed
      */
-    public function uncast($value)
+    public function cast($value)
     {
-        return $this->cast($value);
+        return number_format($value, $this->getFormat(), $this->decimalSeparator, $this->thousandsSeparator);
     }
 
-    public function setFormat($format)
+    /**
+     * Get the format.
+     *
+     * @return int|string
+     */
+    protected function getFormat()
     {
-        $this->format = $format;
-
-        return $this;
+        return $this->format ?? 0;
     }
 }

@@ -1,4 +1,4 @@
-<?php namespace Arcanedev\LaravelCastable\Tests\Database\Eloquent;
+<?php namespace Arcanedev\LaravelCastable\Tests\Laravel\Eloquent;
 
 use Arcanedev\LaravelCastable\Database\Eloquent\Model;
 use Arcanedev\LaravelCastable\Tests\TestCase;
@@ -19,7 +19,7 @@ use Mockery as m;
 use ReflectionClass;
 use stdClass;
 
-class LaravelEloquentModel extends TestCase
+class ModelTest extends TestCase
 {
     /* -----------------------------------------------------------------
      |  Traits
@@ -178,7 +178,7 @@ class LaravelEloquentModel extends TestCase
 
     public function testNewInstanceReturnsNewInstanceWithAttributesSet()
     {
-        $model    = new EloquentModelStub;
+        $model = new EloquentModelStub;
         $instance = $model->newInstance(['name' => 'taylor']);
 
         static::assertInstanceOf(EloquentModelStub::class, $instance);
@@ -254,9 +254,9 @@ class LaravelEloquentModel extends TestCase
 
     public function testEagerLoadingWithColumns()
     {
-        $model    = new EloquentModelWithoutRelationStub;
+        $model = new EloquentModelWithoutRelationStub;
         $instance = $model->newInstance()->newQuery()->with('foo:bar,baz', 'hadi');
-        $builder  = m::mock(Builder::class);
+        $builder = m::mock(Builder::class);
         $builder->shouldReceive('select')->once()->with(['bar', 'baz']);
 
         static::assertNotNull($instance->getEagerLoads()['hadi']);
@@ -282,10 +282,10 @@ class LaravelEloquentModel extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.updating: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: ' . get_class($model), $model)->andReturn(true);
         $model->id = 1;
         $model->foo = 'bar';
 
@@ -296,6 +296,7 @@ class LaravelEloquentModel extends TestCase
 
         static::assertTrue($model->save());
     }
+
     public function testUpdateProcessDoesntOverrideTimestamps()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery'])->getMock();
@@ -321,7 +322,7 @@ class LaravelEloquentModel extends TestCase
         $query = m::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(false);
         $model->exists = true;
 
         static::assertFalse($model->save());
@@ -333,8 +334,8 @@ class LaravelEloquentModel extends TestCase
         $query = m::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.updating: ' . get_class($model), $model)->andReturn(false);
         $model->exists = true;
         $model->foo = 'bar';
 
@@ -380,10 +381,10 @@ class LaravelEloquentModel extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.updating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.updating: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.updated: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: ' . get_class($model), $model)->andReturn(true);
         $model->id = 1;
         $model->syncOriginal();
         $model->id = 2;
@@ -404,6 +405,7 @@ class LaravelEloquentModel extends TestCase
         static::assertInstanceOf(Carbon::class, $model->created_at);
         static::assertInstanceOf(Carbon::class, $model->updated_at);
     }
+
     public function testTimestampsAreReturnedAsObjectsFromPlainDatesAndTimestamps()
     {
         $model = $this->getMockBuilder(EloquentDateModelStub::class)->setMethods(['getDateFormat'])->getMock();
@@ -415,10 +417,11 @@ class LaravelEloquentModel extends TestCase
         static::assertInstanceOf(Carbon::class, $model->created_at);
         static::assertInstanceOf(Carbon::class, $model->updated_at);
     }
+
     public function testTimestampsAreReturnedAsObjectsOnCreate()
     {
         $timestamps = [
-            'created_at' =>Carbon::now(),
+            'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
         $model = new EloquentDateModelStub;
@@ -430,6 +433,7 @@ class LaravelEloquentModel extends TestCase
         static::assertInstanceOf(Carbon::class, $instance->updated_at);
         static::assertInstanceOf(Carbon::class, $instance->created_at);
     }
+
     public function testDateTimeAttributesReturnNullIfSetToNull()
     {
         $timestamps = [
@@ -445,6 +449,7 @@ class LaravelEloquentModel extends TestCase
         $instance->created_at = null;
         static::assertNull($instance->created_at);
     }
+
     public function testTimestampsAreCreatedFromStringsAndIntegers()
     {
         $model = new EloquentDateModelStub;
@@ -460,6 +465,7 @@ class LaravelEloquentModel extends TestCase
         $model->created_at = '2012-01-01';
         static::assertInstanceOf(Carbon::class, $model->created_at);
     }
+
     public function testFromDateTime()
     {
         $model = new EloquentModelStub;
@@ -482,6 +488,7 @@ class LaravelEloquentModel extends TestCase
         $value = '1429311541';
         static::assertEquals('2015-04-17 22:59:01', $model->fromDateTime($value));
     }
+
     public function testInsertProcess()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -491,10 +498,10 @@ class LaravelEloquentModel extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.created: '.get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.creating: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.created: ' . get_class($model), $model);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: ' . get_class($model), $model);
         $model->name = 'taylor';
         $model->exists = false;
         static::assertTrue($model->save());
@@ -508,16 +515,17 @@ class LaravelEloquentModel extends TestCase
         $model->expects($this->once())->method('updateTimestamps');
         $model->setIncrementing(false);
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.created: '.get_class($model), $model);
-        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: '.get_class($model), $model);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.creating: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.created: ' . get_class($model), $model);
+        $events->shouldReceive('dispatch')->once()->with('eloquent.saved: ' . get_class($model), $model);
         $model->name = 'taylor';
         $model->exists = false;
         static::assertTrue($model->save());
         static::assertNull($model->id);
         static::assertTrue($model->exists);
     }
+
     public function testInsertIsCancelledIfCreatingEventReturnsFalse()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery'])->getMock();
@@ -525,11 +533,12 @@ class LaravelEloquentModel extends TestCase
         $query->shouldReceive('getConnection')->once();
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->setEventDispatcher($events = m::mock(Dispatcher::class));
-        $events->shouldReceive('until')->once()->with('eloquent.saving: '.get_class($model), $model)->andReturn(true);
-        $events->shouldReceive('until')->once()->with('eloquent.creating: '.get_class($model), $model)->andReturn(false);
+        $events->shouldReceive('until')->once()->with('eloquent.saving: ' . get_class($model), $model)->andReturn(true);
+        $events->shouldReceive('until')->once()->with('eloquent.creating: ' . get_class($model), $model)->andReturn(false);
         static::assertFalse($model->save());
         static::assertFalse($model->exists);
     }
+
     public function testDeleteProperlyDeletesModel()
     {
         $model = $this->getMockBuilder(Model::class)->setMethods(['newModelQuery', 'updateTimestamps', 'touchOwners'])->getMock();
@@ -542,6 +551,7 @@ class LaravelEloquentModel extends TestCase
         $model->id = 1;
         $model->delete();
     }
+
     public function testPushNoRelations()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -556,6 +566,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals(1, $model->id);
         static::assertTrue($model->exists);
     }
+
     public function testPushEmptyOneRelation()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -572,6 +583,7 @@ class LaravelEloquentModel extends TestCase
         static::assertTrue($model->exists);
         static::assertNull($model->relationOne);
     }
+
     public function testPushOneRelation()
     {
         $related1 = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -599,6 +611,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals(2, $related1->id);
         static::assertTrue($related1->exists);
     }
+
     public function testPushEmptyManyRelation()
     {
         $model = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -615,6 +628,7 @@ class LaravelEloquentModel extends TestCase
         static::assertTrue($model->exists);
         $this->assertCount(0, $model->relationMany);
     }
+
     public function testPushManyRelation()
     {
         $related1 = $this->getMockBuilder(EloquentModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
@@ -648,6 +662,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertCount(2, $model->relationMany);
         static::assertEquals([2, 3], $model->relationMany->pluck('id')->all());
     }
+
     public function testNewQueryReturnsEloquentQueryBuilder()
     {
         $conn = m::mock(Connection::class);
@@ -661,6 +676,7 @@ class LaravelEloquentModel extends TestCase
         $builder = $model->newQuery();
         static::assertInstanceOf(Builder::class, $builder);
     }
+
     public function testGetAndSetTableOperations()
     {
         $model = new EloquentModelStub;
@@ -668,6 +684,7 @@ class LaravelEloquentModel extends TestCase
         $model->setTable('foo');
         static::assertEquals('foo', $model->getTable());
     }
+
     public function testGetKeyReturnsValueOfPrimaryKey()
     {
         $model = new EloquentModelStub;
@@ -675,10 +692,11 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals(1, $model->getKey());
         static::assertEquals('id', $model->getKeyName());
     }
+
     public function testConnectionManagement()
     {
         EloquentModelStub::setConnectionResolver($resolver = m::mock(ConnectionResolverInterface::class));
-        $model = m::mock(EloquentModelStub::class.'[getConnectionName,connection]');
+        $model = m::mock(EloquentModelStub::class . '[getConnectionName,connection]');
         $retval = $model->setConnection('foo');
         static::assertEquals($retval, $model);
         static::assertEquals('foo', $model->connection);
@@ -686,6 +704,7 @@ class LaravelEloquentModel extends TestCase
         $resolver->shouldReceive('connection')->once()->with('somethingElse')->andReturn('bar');
         static::assertEquals('bar', $model->getConnection());
     }
+
     public function testToArray()
     {
         $model = new EloquentModelStub;
@@ -712,6 +731,7 @@ class LaravelEloquentModel extends TestCase
         $array = $model->toArray();
         static::assertEquals('appended', $array['appendable']);
     }
+
     public function testVisibleCreatesArrayWhitelist()
     {
         $model = new EloquentModelStub;
@@ -721,6 +741,7 @@ class LaravelEloquentModel extends TestCase
         $array = $model->toArray();
         static::assertEquals(['name' => 'Taylor'], $array);
     }
+
     public function testHiddenCanAlsoExcludeRelationships()
     {
         $model = new EloquentModelStub;
@@ -730,6 +751,7 @@ class LaravelEloquentModel extends TestCase
         $array = $model->toArray();
         static::assertEquals(['name' => 'Taylor'], $array);
     }
+
     public function testGetArrayableRelationsFunctionExcludeHiddenRelationships()
     {
         $model = new EloquentModelStub;
@@ -742,6 +764,7 @@ class LaravelEloquentModel extends TestCase
         $array = $method->invokeArgs($model, []);
         static::assertSame(['bam' => ['boom']], $array);
     }
+
     public function testToArraySnakeAttributes()
     {
         $model = new EloquentModelStub;
@@ -759,6 +782,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('baz', $array['namesList'][0]['bar']);
         static::assertEquals('boom', $array['namesList'][1]['bam']);
     }
+
     public function testToArrayUsesMutators()
     {
         $model = new EloquentModelStub;
@@ -766,6 +790,7 @@ class LaravelEloquentModel extends TestCase
         $array = $model->toArray();
         static::assertEquals([1, 2, 3], $array['list_items']);
     }
+
     public function testHidden()
     {
         $model = new EloquentModelStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -774,6 +799,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
     }
+
     public function testVisible()
     {
         $model = new EloquentModelStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -782,6 +808,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
     }
+
     public function testDynamicHidden()
     {
         $model = new EloquentModelDynamicHiddenStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -789,6 +816,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
     }
+
     public function testWithHidden()
     {
         $model = new EloquentModelStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -799,6 +827,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayHasKey('age', $array);
         $this->assertArrayNotHasKey('id', $array);
     }
+
     public function testMakeHidden()
     {
         $model = new EloquentModelStub(['name' => 'foo', 'age' => 'bar', 'address' => 'foobar', 'id' => 'baz']);
@@ -818,6 +847,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayNotHasKey('address', $array);
         $this->assertArrayHasKey('id', $array);
     }
+
     public function testDynamicVisible()
     {
         $model = new EloquentModelDynamicVisibleStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -825,6 +855,7 @@ class LaravelEloquentModel extends TestCase
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
     }
+
     public function testFillable()
     {
         $model = new EloquentModelStub;
@@ -833,16 +864,19 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('foo', $model->name);
         static::assertEquals('bar', $model->age);
     }
+
     public function testQualifyColumn()
     {
         $model = new EloquentModelStub;
         static::assertEquals('stub.column', $model->qualifyColumn('column'));
     }
+
     public function testForceFillMethodFillsGuardedAttributes()
     {
         $model = (new EloquentModelSaveStub)->forceFill(['id' => 21]);
         static::assertEquals(21, $model->id);
     }
+
     public function testFillingJSONAttributes()
     {
         $model = new EloquentModelStub;
@@ -860,6 +894,7 @@ class LaravelEloquentModel extends TestCase
             $model->toArray()
         );
     }
+
     public function testUnguardAllowsAnythingToBeSet()
     {
         $model = new EloquentModelStub;
@@ -870,12 +905,14 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('bar', $model->age);
         EloquentModelStub::unguard(false);
     }
+
     public function testUnderscorePropertiesAreNotFilled()
     {
         $model = new EloquentModelStub;
         $model->fill(['_method' => 'PUT']);
         static::assertEquals([], $model->getAttributes());
     }
+
     public function testGuarded()
     {
         $model = new EloquentModelStub;
@@ -885,6 +922,7 @@ class LaravelEloquentModel extends TestCase
         static::assertFalse(isset($model->age));
         static::assertEquals('bar', $model->foo);
     }
+
     public function testFillableOverridesGuarded()
     {
         $model = new EloquentModelStub;
@@ -895,6 +933,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('bar', $model->age);
         static::assertEquals('bar', $model->foo);
     }
+
     /**
      * @expectedException \Illuminate\Database\Eloquent\MassAssignmentException
      * @expectedExceptionMessage name
@@ -905,6 +944,7 @@ class LaravelEloquentModel extends TestCase
         $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'votes' => 'baz']);
     }
+
     public function testUnguardedRunsCallbackWhileBeingUnguarded()
     {
         $model = Model::unguarded(function () {
@@ -913,6 +953,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('Taylor', $model->name);
         static::assertFalse(Model::isUnguarded());
     }
+
     public function testUnguardedCallDoesNotChangeUnguardedState()
     {
         Model::unguard();
@@ -923,6 +964,7 @@ class LaravelEloquentModel extends TestCase
         static::assertTrue(Model::isUnguarded());
         Model::reguard();
     }
+
     public function testUnguardedCallDoesNotChangeUnguardedStateOnException()
     {
         try {
@@ -934,6 +976,7 @@ class LaravelEloquentModel extends TestCase
         }
         static::assertFalse(Model::isUnguarded());
     }
+
     public function testHasOneCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -947,6 +990,7 @@ class LaravelEloquentModel extends TestCase
         static::assertSame($model, $relation->getParent());
         static::assertInstanceOf(EloquentModelSaveStub::class, $relation->getQuery()->getModel());
     }
+
     public function testMorphOneCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -956,6 +1000,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('save_stub.morph_type', $relation->getQualifiedMorphType());
         static::assertEquals(EloquentModelStub::class, $relation->getMorphClass());
     }
+
     public function testCorrectMorphClassIsReturned()
     {
         Relation::morphMap(['alias' => 'AnotherModel']);
@@ -966,6 +1011,7 @@ class LaravelEloquentModel extends TestCase
             Relation::morphMap([], false);
         }
     }
+
     public function testHasManyCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -979,6 +1025,7 @@ class LaravelEloquentModel extends TestCase
         static::assertSame($model, $relation->getParent());
         static::assertInstanceOf(EloquentModelSaveStub::class, $relation->getQuery()->getModel());
     }
+
     public function testMorphManyCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -988,6 +1035,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('save_stub.morph_type', $relation->getQualifiedMorphType());
         static::assertEquals(EloquentModelStub::class, $relation->getMorphClass());
     }
+
     public function testBelongsToCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -1001,6 +1049,7 @@ class LaravelEloquentModel extends TestCase
         $relation = $model->belongsToExplicitKeyStub();
         static::assertEquals('foo', $relation->getForeignKey());
     }
+
     public function testMorphToCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -1028,6 +1077,7 @@ class LaravelEloquentModel extends TestCase
         static::assertEquals('type', $relation4->getMorphType());
         static::assertEquals('someName', $relation4->getRelation());
     }
+
     public function testBelongsToManyCreatesProperRelation()
     {
         $model = new EloquentModelStub;
@@ -1046,6 +1096,7 @@ class LaravelEloquentModel extends TestCase
         static::assertSame($model, $relation->getParent());
         static::assertInstanceOf(EloquentModelSaveStub::class, $relation->getQuery()->getModel());
     }
+
     public function testRelationsWithVariedConnections()
     {
         // Has one
@@ -1118,7 +1169,7 @@ class LaravelEloquentModel extends TestCase
 
     public function testModelsAssumeTheirName()
     {
-        require_once __DIR__.'/stubs/EloquentModelNamespacedStub.php';
+        require_once __DIR__ . '/stubs/EloquentModelNamespacedStub.php';
 
         $model = new EloquentModelWithoutTableStub;
         static::assertEquals('eloquent_model_without_table_stubs', $model->getTable());
@@ -1136,17 +1187,20 @@ class LaravelEloquentModel extends TestCase
         ];
         static::assertEquals($expectedAttributes, $class->getMutatedAttributes());
     }
+
     public function testRouteKeyIsPrimaryKey()
     {
         $model = new EloquentModelNonIncrementingStub;
         $model->id = 'foo';
         static::assertEquals('foo', $model->getRouteKey());
     }
+
     public function testRouteNameIsPrimaryKeyName()
     {
         $model = new EloquentModelStub;
         static::assertEquals('id', $model->getRouteKeyName());
     }
+
     public function testCloneModelMakesAFreshCopyOfTheModel()
     {
         $class = new EloquentModelStub;
@@ -1171,8 +1225,8 @@ class LaravelEloquentModel extends TestCase
     {
         EloquentModelStub::setEventDispatcher($events = m::mock(Dispatcher::class));
 
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
         $events->shouldReceive('dispatch');
 
@@ -1186,8 +1240,8 @@ class LaravelEloquentModel extends TestCase
     {
         EloquentModelStub::setEventDispatcher($events = m::mock(Dispatcher::class));
 
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
         $events->shouldReceive('dispatch');
 
@@ -1199,8 +1253,8 @@ class LaravelEloquentModel extends TestCase
     {
         EloquentModelStub::setEventDispatcher($events = m::mock(Dispatcher::class));
 
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@saved');
         $events->shouldReceive('forget');
         $events->shouldReceive('dispatch');
 
@@ -1212,10 +1266,10 @@ class LaravelEloquentModel extends TestCase
     {
         EloquentModelStub::setEventDispatcher($events = m::mock(Dispatcher::class));
 
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestObserverStub::class.'@saved');
-        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestAnotherObserverStub::class.'@creating');
-        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub', EloquentTestAnotherObserverStub::class.'@saved');
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestObserverStub::class . '@saved');
+        $events->shouldReceive('listen')->once()->with('eloquent.creating: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestAnotherObserverStub::class . '@creating');
+        $events->shouldReceive('listen')->once()->with('eloquent.saved: Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub', EloquentTestAnotherObserverStub::class . '@saved');
         $events->shouldReceive('forget');
         $events->shouldReceive('dispatch');
 
@@ -1267,7 +1321,7 @@ class LaravelEloquentModel extends TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelStub::incorrectRelationStub must return a relationship instance.
+     * @expectedExceptionMessage Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelStub::incorrectRelationStub must return a relationship instance.
      */
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {
@@ -1334,7 +1388,7 @@ class LaravelEloquentModel extends TestCase
 
     public function testIncrementOnExistingModelCallsQueryAndSetsAttribute()
     {
-        $model = m::mock(EloquentModelStub::class.'[newModelQuery]');
+        $model = m::mock(EloquentModelStub::class . '[newModelQuery]');
         $model->exists = true;
         $model->id = 1;
         $model->syncOriginalAttribute('id');
@@ -1354,11 +1408,11 @@ class LaravelEloquentModel extends TestCase
     {
         $relation = $this->getMockBuilder(BelongsTo::class)->setMethods(['touch'])->disableOriginalConstructor()->getMock();
         $relation->expects($this->once())->method('touch');
-        $model = m::mock(EloquentModelStub::class.'[partner]');
+        $model = m::mock(EloquentModelStub::class . '[partner]');
         $this->addMockConnection($model);
         $model->shouldReceive('partner')->once()->andReturn($relation);
         $model->setTouchedRelations(['partner']);
-        $mockPartnerModel = m::mock(EloquentModelStub::class.'[touchOwners]');
+        $mockPartnerModel = m::mock(EloquentModelStub::class . '[touchOwners]');
         $mockPartnerModel->shouldReceive('touchOwners')->once();
         $model->setRelation('partner', $mockPartnerModel);
         $model->touchOwners();
@@ -1368,7 +1422,7 @@ class LaravelEloquentModel extends TestCase
     {
         $relation = $this->getMockBuilder(BelongsTo::class)->setMethods(['touch'])->disableOriginalConstructor()->getMock();
         $relation->expects($this->once())->method('touch');
-        $model = m::mock(EloquentModelStub::class.'[partner]');
+        $model = m::mock(EloquentModelStub::class . '[partner]');
         $this->addMockConnection($model);
         $model->shouldReceive('partner')->once()->andReturn($relation);
         $model->setTouchedRelations(['partner']);
@@ -1494,7 +1548,7 @@ class LaravelEloquentModel extends TestCase
 
     /**
      * @expectedException \Illuminate\Database\Eloquent\JsonEncodingException
-     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [Arcanedev\LaravelCastable\Tests\Database\Eloquent\EloquentModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
+     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [Arcanedev\LaravelCastable\Tests\Laravel\Eloquent\EloquentModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
      */
     public function testModelAttributeCastingFailsOnUnencodableData()
     {
@@ -1555,7 +1609,7 @@ class LaravelEloquentModel extends TestCase
 
     public function testNonExistingAttributeWithInternalMethodNameDoesntCallMethod()
     {
-        $model = m::mock(EloquentModelStub::class.'[delete,getRelationValue]');
+        $model = m::mock(EloquentModelStub::class . '[delete,getRelationValue]');
         $model->name = 'Spark';
         $model->shouldNotReceive('delete');
         $model->shouldReceive('getRelationValue')->once()->with('belongsToStub')->andReturn('relation');
@@ -1569,7 +1623,7 @@ class LaravelEloquentModel extends TestCase
         // Returns null for a Model.php method name
         static::assertNull($model->delete);
 
-        $model = m::mock(EloquentModelStub::class.'[delete]');
+        $model = m::mock(EloquentModelStub::class . '[delete]');
         $model->delete = 123;
 
         static::assertEquals(123, $model->delete);

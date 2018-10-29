@@ -15,4 +15,11 @@ interface Caster
      * @return mixed
      */
     public function uncast($value);
+
+    /**
+     * @param  string|null  $format
+     *
+     * @return self
+     */
+    public function setFormat($format);
 }
