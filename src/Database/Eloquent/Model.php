@@ -1,5 +1,6 @@
 <?php namespace Arcanedev\LaravelCastable\Database\Eloquent;
 
+use Arcanedev\LaravelCastable\Contracts\Castable;
 use Arcanedev\LaravelCastable\Database\Eloquent\Concerns\WithCastableAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
@@ -19,25 +20,6 @@ abstract class Model extends IlluminateModel
      */
 
     /**
-     * Cast an attribute to a native PHP type.
-     *
-     * @param  string  $key
-     * @param  mixed   $value
-     *
-     * @return mixed
-     */
-    public function castAttribute($key, $value)
-    {
-        if (is_null($value))
-            return $value;
-
-        if ($this->isCustomObjectCastable($key))
-            return $this->getAttributeFromArray($key);
-
-        return cast($this->getCasts()[$key], $value);
-    }
-
-    /**
      * Set a given attribute on the model.
      *
      * @param  string  $key
@@ -55,40 +37,26 @@ abstract class Model extends IlluminateModel
     }
 
     /**
-     * Determine if the new and old values for a given key are equivalent.
+     * Cast an attribute to a native PHP type.
      *
-     * @param  string $key
-     * @param  mixed  $current
-     * @return bool
+     * @param  string  $key
+     * @param  mixed   $value
+     *
+     * @return mixed
      */
-    protected function originalIsEquivalent($key, $current)
+    public function castAttribute($key, $value)
     {
+        if (is_null($value))
+            return $value;
 
-        if (! array_key_exists($key, $this->original)) {
-            return false;
+        if ($this->isCustomObjectCastable($key)) {
+            $value = $this->getAttributeFromArray($key);
+
+            if ( ! $value instanceof Castable)
+                return $this->castCustomAttribute($key, $value);
         }
 
-        $original = $this->getOriginal($key);
-
-        if ($current === $original) {
-            return true;
-        }
-
-        if (is_null($current)) {
-            return false;
-        }
-
-        if ($this->isDateAttribute($key)) {
-            return $this->fromDateTime($current) ===
-                $this->fromDateTime($original);
-        }
-
-        if ($this->hasCast($key)) {
-            return $this->castAttribute($key, $current) === $this->castAttribute($key, $original);
-        }
-
-        return is_numeric($current) && is_numeric($original)
-            && strcmp((string) $current, (string) $original) === 0;
+        return cast($this->getCasts()[$key], $value);
     }
 
     /**

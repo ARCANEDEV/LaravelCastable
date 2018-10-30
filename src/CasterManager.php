@@ -3,6 +3,7 @@
 use Arcanedev\LaravelCastable\Contracts\Caster;
 use Arcanedev\LaravelCastable\Contracts\CasterManager as CasterManagerContract;
 use Illuminate\Config\Repository;
+use Illuminate\Support\Str;
 
 class CasterManager implements CasterManagerContract
 {
@@ -11,9 +12,10 @@ class CasterManager implements CasterManagerContract
      | -----------------------------------------------------------------
      */
 
-    /** @var \Illuminate\Contracts\Config\Repository  */
+    /** @var  \Illuminate\Contracts\Config\Repository  */
     protected $config;
 
+    /** @var  array */
     protected $casters = [];
 
     /* -----------------------------------------------------------------
@@ -39,7 +41,7 @@ class CasterManager implements CasterManagerContract
      */
     public function cast($type, $value)
     {
-        if (str_contains($type, ':'))
+        if (Str::contains($type, ':'))
             list($type, $format) = explode(':', $type, 2);
 
         return $this->hasCaster($type)
@@ -98,7 +100,7 @@ class CasterManager implements CasterManagerContract
      *
      * @return \Arcanedev\LaravelCastable\Contracts\Caster
      */
-    private function buildCaster($key)
+    protected function buildCaster($key)
     {
         return app()->make($this->config->get("laravel-castable.casters.$key"));
     }

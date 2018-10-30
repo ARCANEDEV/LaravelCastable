@@ -9,9 +9,8 @@ abstract class SingleAttributeCaster implements Castable
      | -----------------------------------------------------------------
      */
 
-    protected $casted;
-
-    protected $original;
+    /** @var  mixed */
+    protected $casted = null;
 
     /* -----------------------------------------------------------------
      |  Constructor
@@ -20,24 +19,13 @@ abstract class SingleAttributeCaster implements Castable
 
     public function __construct($value)
     {
-        $this->original = $value;
-        $this->casted   = $this->cast($value);
+        $this->casted = $this->cast($value);
     }
 
     /* -----------------------------------------------------------------
      |  Getters & Setters
      | -----------------------------------------------------------------
      */
-
-    /**
-     * Get the original value.
-     *
-     * @return mixed
-     */
-    public function getOriginal()
-    {
-        return $this->original;
-    }
 
     /**
      * Get the casted value.
@@ -49,16 +37,22 @@ abstract class SingleAttributeCaster implements Castable
         return $this->casted;
     }
 
+    /**
+     * Get the uncasted value.
+     *
+     * @return mixed
+     */
+    public function getUncasted()
+    {
+        return $this->uncast($this->casted);
+    }
+
     /* -----------------------------------------------------------------
      |  Main Methods
      | -----------------------------------------------------------------
      */
 
-    /**
-     * @return mixed
-     */
-    public function uncast($value)
-    {
-        return $this->getOriginal();
-    }
+    abstract protected function cast($value);
+
+    abstract protected function uncast($value);
 }

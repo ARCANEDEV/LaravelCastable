@@ -1,7 +1,7 @@
 <?php namespace Arcanedev\LaravelCastable\Database\Eloquent;
 
 use Arcanedev\LaravelCastable\{
-    Contracts\Castable, Contracts\CasterManager, Database\Eloquent\Concerns\WithCastableAttributes
+    Contracts\Castable, Database\Eloquent\Concerns\WithCastableAttributes
 };
 use ArrayAccess;
 use Illuminate\Contracts\Support\{
@@ -23,8 +23,8 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
      | -----------------------------------------------------------------
      */
 
-    protected $original = [];
     protected $casts    = [];
+
     protected $casted   = [];
 
     /* -----------------------------------------------------------------
@@ -44,24 +44,13 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         if (is_string($values))
             $values = json_decode($values, true);
 
-        $this->original = $values;
-        $this->casted   = static::cast($values);
+        $this->casted = $this->cast($values);
     }
 
     /* -----------------------------------------------------------------
      |  Getters & Setters
      | -----------------------------------------------------------------
      */
-
-    /**
-     * Get the original value.
-     *
-     * @return mixed
-     */
-    public function getOriginal()
-    {
-        return $this->original;
-    }
 
     /**
      * Get the casted value.
@@ -74,13 +63,23 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
     }
 
     /**
+     * Get the uncasted value.
+     *
+     * @return mixed
+     */
+    public function getUncasted()
+    {
+        return $this->uncast($this->casted);
+    }
+
+    /**
      * Convert the Fluent instance to an array.
      *
      * @return array
      */
     public function toArray()
     {
-        return $this->uncastAttributes();
+        return $this->getUncasted();
     }
 
     /**
@@ -103,6 +102,11 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
     public function toJson($options = 0)
     {
         return json_encode($this->jsonSerialize(), $options);
+    }
+
+    public function __toString()
+    {
+        return $this->toJson();
     }
 
     /**
@@ -201,16 +205,7 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
      | -----------------------------------------------------------------
      */
 
-    protected function get($key)
-    {
-        $value = $this->casted[$key];
-
-        return $value instanceof SingleAttributeCaster
-            ? $value->getCasted()
-            : $value;
-    }
-
-    public function cast($values)
+    protected function cast($values)
     {
         $results = [];
 
@@ -221,9 +216,24 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
         return $results;
     }
 
-    public function uncast($value)
+    protected function uncast($values)
     {
-        return $this->getOriginal();
+        $results = [];
+
+        foreach ($values as $key => $value) {
+            $results[$key] = $this->uncastAttribute($key, $value);
+        }
+
+        return $results;
+    }
+
+    protected function get($key)
+    {
+        $value = $this->casted[$key];
+
+        return $value instanceof Castable
+            ? $value->getCasted()
+            : $value;
     }
 
     protected function castAttribute($key, $value)
@@ -243,25 +253,9 @@ abstract class MultipleAttributesCaster implements Castable, Arrayable, ArrayAcc
             /** @var  \Arcanedev\LaravelCastable\Contracts\Castable  $type */
             $type = $this->getCasted()[$key];
 
-            return $type->uncast($type->getCasted());
+            return $type->getUncasted();
         }
 
         return uncast($this->casts[$key] ?? 'null', $value);
-    }
-
-    protected function hasCastAttribute($key)
-    {
-        return array_key_exists($key, $this->casts);
-    }
-
-    public function uncastAttributes()
-    {
-        $results = [];
-
-        foreach ($this->casted as $key => $value) {
-            $results[$key] = $this->uncastAttribute($key, $value);
-        }
-
-        return $results;
     }
 }

@@ -30,11 +30,6 @@ trait WithCastableAttributes
 
     //----------------------------------------------------------
 
-    protected function isCustomCastAttribute($type)
-    {
-        return is_a($type, Castable::class, true);
-    }
-
     /**
      * @param  string  $key
      * @param  mixed   $value
@@ -43,13 +38,8 @@ trait WithCastableAttributes
      */
     protected function castCustomAttribute($key, $value)
     {
-        $type = $this->getCustomCastAttributeType($key);
+        $type = $this->casts[$key];
 
         return new $type($value);
-    }
-
-    protected function getCustomCastAttributeType($key)
-    {
-        return $this->casts[$key];
     }
 }

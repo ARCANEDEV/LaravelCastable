@@ -6,6 +6,11 @@ use Illuminate\Database\Schema\Blueprint;
 
 class ModelDecimalCastingTest extends TestCase
 {
+    /* -----------------------------------------------------------------
+     |  Main Methods
+     | -----------------------------------------------------------------
+     */
+
     public function setUp()
     {
         parent::setUp();
